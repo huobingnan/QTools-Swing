@@ -1,0 +1,56 @@
+import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.4.10'
+    id 'edu.sc.seis.launch4j' version '2.5.0'
+}
+
+kotlin {
+    targetCompatibility = JavaVersion.VERSION_1_8
+}
+
+group 'cspace'
+version '1.0.0-PREVIEW'
+
+repositories {
+    // 优先从本地加载依赖jar包
+    mavenLocal()
+    // 然后从阿里云加载依赖jar包
+    maven {url 'https://maven.aliyun.com/repository/central'}
+    // 最后从Maven中央仓库加载依赖jar包
+    mavenCentral()
+}
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
+    testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
+
+    //---------------- third-part dependencies 第三方依赖 ---------------------
+
+    // https://mvnrepository.com/artifact/org.jblas/jblas JBLAS 矩阵运算库的支持
+    implementation group: 'org.jblas', name: 'jblas', version: '1.2.3'
+
+    // https://mvnrepository.com/artifact/org.slf4j/slf4j-api 引入SLF4J日志门面
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: '1.7.25'
+
+    // https://mvnrepository.com/artifact/ch.qos.logback/logback-classic 引入logback日志包
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+
+    // https://mvnrepository.com/artifact/com.google.inject/guice 引入Guice依赖注入框架
+    implementation group: 'com.google.inject', name: 'guice', version: '3.0'
+}
+
+launch4j {
+    mainClassName = 'cspace.ApplicationMainKt'
+}
+
+task destributeWindowsPlatform(type: Launch4jLibraryTask) {
+    mainClassName = "cspace.ApplicatinMainKt"
+    outputDir = "windows-release"
+    outfile = "QTools.exe"
+    bundledJrePath = "./jre" // JRE路径
+    bundledJre64Bit = true
+    dontWrapJar = true
+}
