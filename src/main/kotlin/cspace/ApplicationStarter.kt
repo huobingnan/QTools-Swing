@@ -1,9 +1,9 @@
 package cspace
 
+import com.alee.laf.WebLookAndFeel
 import com.google.inject.Guice
 import com.google.inject.Injector
 import cspace.frame.MainFrame
-import cspace.ui.MainView
 import cspace.util.JComponentInitializer
 import org.slf4j.LoggerFactory
 import javax.swing.SwingUtilities
@@ -41,6 +41,8 @@ class ApplicationStarter {
     // 程序启动入口方法
     fun start() {
         log.info("Application starting...")
+        WebLookAndFeel.install()
+        log.info("Application L&F installed!")
         SwingUtilities.invokeLater {
             val frame = context.getInstance(MainFrame::class.java)
             JComponentInitializer.showFrame(frame)

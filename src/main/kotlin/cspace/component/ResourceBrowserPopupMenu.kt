@@ -125,7 +125,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
         item.addActionListener {
             val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
             val resource = resourceBrowser.getSelectedResource() ?: return@addActionListener
-            reloadResource(resource)
+            reloadResource(resource) // 重新加载
             val parentComponent = ApplicationStarter.getContext().getInstance(MainFrame::class.java)
             JOptionPane.showMessageDialog(parentComponent, "reload successfully!", "success", JOptionPane.INFORMATION_MESSAGE)
         }
