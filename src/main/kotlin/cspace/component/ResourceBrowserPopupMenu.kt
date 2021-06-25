@@ -34,7 +34,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
                 val contcar = ContcarFileParser.parse(contcarFile)
                 // 构造Resource对象
                 val resource = Resource()
-                resource.name = "${contcarFile.nameWithoutExtension} [vasp]"
+                resource.name = "${contcarFile.nameWithoutExtension} [${Resource.VASP}]"
                 resource.instance = contcar
                 resource.type = Resource.VASP
                 resource.associatedFile = contcarFile
@@ -64,7 +64,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
                 val gaussianLog = GaussianFileParser.parse(gaussianFile)
                 // 构造Resource对象
                 val resource = Resource()
-                resource.name = "${gaussianFile.nameWithoutExtension} [vasp]"
+                resource.name = "${gaussianFile.nameWithoutExtension} [${Resource.GAUSSIAN}]"
                 resource.instance = gaussianLog
                 resource.type = Resource.GAUSSIAN
                 resource.associatedFile = gaussianFile

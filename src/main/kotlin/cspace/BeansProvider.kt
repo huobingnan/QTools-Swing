@@ -3,9 +3,12 @@ package cspace
 import com.google.inject.AbstractModule
 import com.google.inject.Scopes
 import cspace.component.ResourceBrowserPopupMenu
+import cspace.dialog.ChannelOptionDialog
 import cspace.dialog.ExceptionDialog
 import cspace.dialog.ResourceDetailDialog
 import cspace.frame.MainFrame
+import cspace.ui.ChannelView
+import cspace.ui.DisplayView
 import cspace.ui.MainView
 import cspace.ui.ResourceBrowserView
 
@@ -18,6 +21,9 @@ class BeansProvider: AbstractModule() {
         bind(ResourceBrowserPopupMenu::class.java).`in`(Scopes.SINGLETON)
         bind(ExceptionDialog::class.java).`in`(Scopes.SINGLETON)
         bind(ResourceDetailDialog::class.java).`in`(Scopes.SINGLETON)
+        bind(ChannelView::class.java).`in`(Scopes.SINGLETON)
+        bind(DisplayView::class.java).`in`(Scopes.SINGLETON)
+        bind(ChannelOptionDialog::class.java).`in`(Scopes.SINGLETON)
         // 注册frame
         bind(MainFrame::class.java).`in`(Scopes.SINGLETON)
     }
