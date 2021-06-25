@@ -2,8 +2,10 @@ package cspace.ui
 
 import cspace.ApplicationStarter
 import cspace.component.ResourceBrowserPopupMenu
+import cspace.dialog.ResourceDetailDialog
 import cspace.frame.MainFrame
 import cspace.model.Resource
+import cspace.util.JComponentInitializer
 import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import java.awt.Dimension
@@ -51,6 +53,21 @@ class ResourceBrowserView: JPanel() {
 
             }
         })
+
+        // 设置双击查看资源详情
+        resourceListBrowser.addMouseListener(object: MouseAdapter() {
+            override fun mouseClicked(event: MouseEvent?) {
+                super.mouseClicked(event)
+                if (event!!.button == MouseEvent.BUTTON1 && event.clickCount == 2) {
+                    val resource = getSelectedResource()
+                    if (resource != null) {
+                        val dialog = ApplicationStarter.getContext().getInstance(ResourceDetailDialog::class.java)
+                        dialog.acceptResource(resource)
+                        JComponentInitializer.showDialog(dialog)
+                    }
+                }
+            }
+        })
     }
 
 
@@ -70,7 +87,7 @@ class ResourceBrowserView: JPanel() {
         return isDuplicated
     }
 
-    // --------------------------- 业务逻辑方法 --------------------------
+    // --------------------------------------- 业务逻辑方法 ------------------------------------------
 
     /**
      * 接收一个Resource对象，然后更新UI显示
@@ -94,9 +111,29 @@ class ResourceBrowserView: JPanel() {
     /**
      * 获取选中的Resource对象。
      * 当ResourceBrowser为空，或者未选中任何Resource时返回null
+     * @author huobn
      */
     fun getSelectedResource(): Resource? {
         return resourceListBrowser.selectedValue
+    }
+
+    /**
+     * 获取所有的Resource
+     * @author huobn
+     */
+    fun getAllResources(): List<Resource> {
+        val model = resourceListBrowser.model as DefaultListModel
+        if (model.isEmpty) return emptyList()
+        return model.elements().toList()
+    }
+
+    /**
+     * 删除资源
+     * @author huobn
+     */
+    fun deleteResource(resource: Resource) {
+        val model = resourceListBrowser.model as DefaultListModel
+        model.removeElement(resource)
     }
 
 }

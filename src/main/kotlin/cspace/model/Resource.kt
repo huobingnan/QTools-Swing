@@ -49,12 +49,6 @@ class Resource {
 
                 if (contcar.coordinateType == CoordinateType.Direct) {
                     // 分数坐标要进行转换
-                    if (log.isDebugEnabled) {
-                        val d = base.mmul(
-                            DoubleMatrix(3,1, coordinate[0], coordinate[1], coordinate[2])
-                        )
-                        log.debug("{}", d.toString())
-                    }
                     coordinate = base.mmul(
                         DoubleMatrix(3,1, coordinate[0], coordinate[1], coordinate[2])
                     ).toArray().toTypedArray()

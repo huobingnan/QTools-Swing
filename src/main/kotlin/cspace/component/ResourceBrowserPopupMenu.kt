@@ -2,6 +2,8 @@ package cspace.component
 
 import cspace.ApplicationStarter
 import cspace.dialog.ExceptionDialog
+import cspace.dialog.ResourceDetailDialog
+import cspace.frame.MainFrame
 import cspace.model.Resource
 import cspace.ui.MainView
 import cspace.ui.ResourceBrowserView
@@ -84,9 +86,17 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
         item
     }
 
+    // 展示资源详情
     private val detailMenu: JMenuItem by lazy {
         val item = JMenuItem("Detail")
         item.addActionListener {
+            val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+            val resource = resourceBrowser.getSelectedResource()
+            if (resource != null) {
+                val dialog = ApplicationStarter.getContext().getInstance(ResourceDetailDialog::class.java)
+                dialog.acceptResource(resource)
+                JComponentInitializer.showDialog(dialog)
+            }
         }
         item
     }
@@ -94,12 +104,31 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
     // 删除文件
     private val deleteMenu: JMenuItem by lazy {
         val item = JMenuItem("Delete")
+        item.addActionListener {
+            val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+            val resource = resourceBrowser.getSelectedResource() ?: return@addActionListener
+            val parentComponent = ApplicationStarter.getContext().getInstance(MainFrame::class.java)
+            val confirmation = JOptionPane.showConfirmDialog(
+                parentComponent,
+                "Are you sure to delete ${resource.name}?", "warning", JOptionPane.WARNING_MESSAGE
+            )
+            if (confirmation == JOptionPane.OK_OPTION) {
+                resourceBrowser.deleteResource(resource)
+            }
+        }
         item
     }
 
-    // 刷新文件
-    private val refreshMenu: JMenuItem by lazy {
-        val item = JMenuItem("Refresh")
+    // 重新加载文件
+    private val reloadMenu: JMenuItem by lazy {
+        val item = JMenuItem("Reload")
+        item.addActionListener {
+            val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+            val resource = resourceBrowser.getSelectedResource() ?: return@addActionListener
+            reloadResource(resource)
+            val parentComponent = ApplicationStarter.getContext().getInstance(MainFrame::class.java)
+            JOptionPane.showMessageDialog(parentComponent, "reload successfully!", "success", JOptionPane.INFORMATION_MESSAGE)
+        }
         item
     }
 
@@ -148,7 +177,32 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
         add(importMenu)
         add(detailMenu)
         add(deleteMenu)
-        add(refreshMenu)
+        add(reloadMenu)
         add(openInMenu)
+    }
+
+    // ----------------------------- 业务方法 -------------------------------
+    private fun reloadResource(resource: Resource) {
+        if (resource.type == Resource.VASP) {
+            try {
+                val file = resource.associatedFile
+                val result = ContcarFileParser.parse(file!!)
+                resource.instance = result // 刷新
+            }catch (ex: Exception) {
+                val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
+                exceptionDialog.acceptException(ex)
+                JComponentInitializer.showDialog(exceptionDialog)
+            }
+        }else if (resource.type == Resource.GAUSSIAN) {
+            try {
+                val file = resource.associatedFile
+                val result = GaussianFileParser.parse(file!!)
+                resource.instance = resource
+            }catch (ex: Exception) {
+                val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
+                exceptionDialog.acceptException(ex)
+                JComponentInitializer.showDialog(exceptionDialog)
+            }
+        }
     }
 }
