@@ -1,4 +1,4 @@
-package cspace.vasp
+package cspace.support
 
 import cspace.model.AtomCoordinate
 import cspace.model.GaussianLog

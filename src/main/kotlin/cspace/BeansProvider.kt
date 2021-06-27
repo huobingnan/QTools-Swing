@@ -2,9 +2,11 @@ package cspace
 
 import com.google.inject.AbstractModule
 import com.google.inject.Scopes
+import cspace.component.ExtSettingNewPopupMenu
 import cspace.component.ResourceBrowserPopupMenu
 import cspace.dialog.ChannelOptionDialog
 import cspace.dialog.ExceptionDialog
+import cspace.dialog.FrameOptionDialog
 import cspace.dialog.ResourceDetailDialog
 import cspace.frame.MainFrame
 import cspace.ui.ChannelView
@@ -24,6 +26,8 @@ class BeansProvider: AbstractModule() {
         bind(ChannelView::class.java).`in`(Scopes.SINGLETON)
         bind(DisplayView::class.java).`in`(Scopes.SINGLETON)
         bind(ChannelOptionDialog::class.java).`in`(Scopes.SINGLETON)
+        bind(ExtSettingNewPopupMenu::class.java).`in`(Scopes.SINGLETON)
+        bind(FrameOptionDialog::class.java).`in`(Scopes.SINGLETON)
         // 注册frame
         bind(MainFrame::class.java).`in`(Scopes.SINGLETON)
     }

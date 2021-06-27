@@ -63,7 +63,7 @@ class ResourceBrowserView: JPanel() {
                     if (resource != null) {
                         val dialog = ApplicationStarter.getContext().getInstance(ResourceDetailDialog::class.java)
                         dialog.acceptResource(resource)
-                        JComponentInitializer.showDialog(dialog)
+                        JComponentInitializer.showDialogSupport(dialog)
                     }
                 }
             }

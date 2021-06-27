@@ -1,8 +1,12 @@
 package cspace.dialog
 
+import cspace.ApplicationStarter
+import cspace.frame.MainFrame
 import cspace.model.Contcar
 import cspace.model.GaussianLog
 import cspace.model.Resource
+import cspace.util.DialogSupport
+import cspace.util.JComponentInitializer
 import java.awt.BorderLayout
 import java.awt.Dimension
 import java.awt.FlowLayout
@@ -16,7 +20,7 @@ import javax.swing.table.JTableHeader
  * 资源详情对话框
  * @author huobn
  */
-class ResourceDetailDialog: JDialog() {
+class ResourceDetailDialog: JDialog(), DialogSupport{
 
     // 头部信息展示表
     private val headerInformationTable: JTable by lazy {
@@ -118,7 +122,7 @@ class ResourceDetailDialog: JDialog() {
         add(topLevelContainer, BorderLayout.CENTER)
     }
 
-
+    // 填充高斯文件的信息
     private fun fillGaussianInformation(resource: Resource) {
         val instance = resource.instance as GaussianLog
         val headerTableModel = headerInformationTable.model as DefaultTableModel
@@ -160,6 +164,7 @@ class ResourceDetailDialog: JDialog() {
         }
     }
 
+    // 在UI界面上填充VASP文件信息
     private fun fillVASPInformation(resource: Resource) {
         val instance = resource.instance as Contcar
         val headerInformationTableModel = headerInformationTable.model as DefaultTableModel
@@ -185,8 +190,10 @@ class ResourceDetailDialog: JDialog() {
         // 转换为原子坐标形式
         val atomCoordinateList = Resource.convertCoordinateToCommonType(resource)
         atomCoordinateList.forEach {
+            // 坐标的精确度保留到小数点后十位
+            val coordinateFormat = String.format("[%.10f, %.10f, %.10f]", it.x, it.y, it.z)
             coordinateInformationTableModel.addRow(
-                arrayOf("${it.symbol}${it.sequenceNumber}", "[${it.x}, ${it.y}, ${it.z}]")
+                arrayOf("${it.symbol}${it.sequenceNumber}", coordinateFormat)
             )
         }
 
@@ -200,5 +207,18 @@ class ResourceDetailDialog: JDialog() {
         } else if (resource.type == Resource.GAUSSIAN) {
             fillGaussianInformation(resource)
         }
+    }
+
+    override fun isExitOnApprove(): Boolean {
+        return false
+    }
+
+    override fun showDialog() {
+        JComponentInitializer.alignCenter(this)
+        isVisible = true
+    }
+
+    override fun closeDialog() {
+        isVisible = false
     }
 }

@@ -8,8 +8,8 @@ import cspace.model.Resource
 import cspace.ui.MainView
 import cspace.ui.ResourceBrowserView
 import cspace.util.JComponentInitializer
-import cspace.vasp.ContcarFileParser
-import cspace.vasp.GaussianFileParser
+import cspace.support.ContcarFileParser
+import cspace.support.GaussianFileParser
 import java.awt.Desktop
 import java.lang.Exception
 import javax.swing.*
@@ -44,7 +44,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
             }catch (ex: Exception) {
                 val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
                 exceptionDialog.acceptException(ex)
-                JComponentInitializer.showDialog(exceptionDialog)
+                JComponentInitializer.showDialogSupport(exceptionDialog)
             }
         }
         item
@@ -73,7 +73,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
             }catch (ex: Exception) {
                 val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
                 exceptionDialog.acceptException(ex)
-                JComponentInitializer.showDialog(exceptionDialog)
+                JComponentInitializer.showDialogSupport(exceptionDialog)
             }
         }
         item
@@ -95,7 +95,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
             if (resource != null) {
                 val dialog = ApplicationStarter.getContext().getInstance(ResourceDetailDialog::class.java)
                 dialog.acceptResource(resource)
-                JComponentInitializer.showDialog(dialog)
+                JComponentInitializer.showDialogSupport(dialog)
             }
         }
         item
@@ -191,7 +191,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
             }catch (ex: Exception) {
                 val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
                 exceptionDialog.acceptException(ex)
-                JComponentInitializer.showDialog(exceptionDialog)
+                JComponentInitializer.showDialogSupport(exceptionDialog)
             }
         }else if (resource.type == Resource.GAUSSIAN) {
             try {
@@ -201,7 +201,7 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
             }catch (ex: Exception) {
                 val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
                 exceptionDialog.acceptException(ex)
-                JComponentInitializer.showDialog(exceptionDialog)
+                JComponentInitializer.showDialogSupport(exceptionDialog)
             }
         }
     }

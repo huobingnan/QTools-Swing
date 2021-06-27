@@ -1,7 +1,9 @@
 package cspace.ui
 
 import cspace.ApplicationStarter
+import cspace.component.ChannelTab
 import cspace.dialog.ChannelOptionDialog
+import cspace.model.ChannelSetting
 import cspace.util.AssetsResolver
 import cspace.util.JComponentInitializer
 import java.awt.BorderLayout
@@ -16,6 +18,10 @@ import javax.swing.border.TitledBorder
  */
 class ChannelView: JPanel() {
 
+    // ----------------------------- 数据域 --------------------------------
+
+    private val channelSettingCache = HashMap<String, ChannelSetting>()
+
     // 新建分析通道按钮
     private val newChannelButton: JButton by lazy {
         val button = JButton(ImageIcon(AssetsResolver.getAsset("channel-view.new-channel.icon")))
@@ -23,7 +29,30 @@ class ChannelView: JPanel() {
         button.isOpaque = false
         button.addActionListener {
             val dialog = ApplicationStarter.getContext().getInstance(ChannelOptionDialog::class.java)
-            JComponentInitializer.showDialog(dialog)
+            dialog.refreshUI()
+            // JComponentInitializer.showDialog(dialog)
+            JComponentInitializer.showDialogSupport(dialog)
+            if (!dialog.isExitOnApprove()) return@addActionListener
+            var channelSetting = dialog.getChannelSetting()
+            // channelName是索引一个Channel的唯一键值，所以要保证其唯一性（检测重复）
+            while (dialog.isExitOnApprove() && channelSettingCache.containsKey(channelSetting.channelName)) {
+                JOptionPane.showMessageDialog(
+                    dialog,
+                    "duplicated channel name : ${channelSetting.channelName}",
+                    "invalid input",
+                    JOptionPane.ERROR_MESSAGE
+                )
+                dialog.refreshUI(channelSetting)
+                JComponentInitializer.showDialogSupport(dialog)
+                channelSetting = dialog.getChannelSetting(channelSetting)
+            }
+            if (!dialog.isExitOnApprove()) return@addActionListener
+            channelSettingCache[channelSetting.channelName] = channelSetting // 写入到缓存
+            //--------------------------- 更新UI显示 -------------------------------
+            //!   1. 新建tabPane
+            //!--------------------------------------------------------------------
+            channelTabPane.addTab(channelSetting.channelName, newChannelTab())
+
         }
         button
     }
@@ -86,4 +115,11 @@ class ChannelView: JPanel() {
         add(functionToolBar, BorderLayout.WEST)
         add(channelTabPane, BorderLayout.CENTER)
     }
+
+    // ------------------------- 业务方法 -------------------------
+
+    private fun newChannelTab(): JComponent {
+       return ChannelTab()
+    }
+
 }

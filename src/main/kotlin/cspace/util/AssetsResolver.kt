@@ -19,6 +19,7 @@ class AssetsResolver {
             assetRegistry["channel-view.execute.icon"] = "${PathResolver.ASSET_FOLDER}/channel-view.execute.icon.png"
             assetRegistry["channel-view.setting.icon"] = "${PathResolver.ASSET_FOLDER}/channel-view.setting.icon.png"
             assetRegistry["channel-view.delete.icon"] = "${PathResolver.ASSET_FOLDER}/channel-view.delete.icon.png"
+            assetRegistry["channel-tab.new-frame.icon"] = "${PathResolver.ASSET_FOLDER}/channel-tab.new-frame.icon.png"
         }
 
         fun getAsset(assetName: String): String {

@@ -3,6 +3,8 @@ package cspace.dialog
 import cspace.ApplicationStarter
 import cspace.frame.MainFrame
 import cspace.util.AssetsResolver
+import cspace.util.DialogSupport
+import cspace.util.JComponentInitializer
 import java.awt.*
 import java.io.PrintStream
 import java.io.PrintWriter
@@ -14,7 +16,7 @@ import javax.swing.*
  * 当程序运行出现异常时，使用这个Dialog进行显示异常的信息
  * @author huobn
  */
-class ExceptionDialog: JDialog() {
+class ExceptionDialog: JDialog(), DialogSupport {
 
 
     // 异常消息显示的区域
@@ -105,5 +107,18 @@ class ExceptionDialog: JDialog() {
         exception.printStackTrace(printWriter)
         detailInformationTextArea.text = stringWriter.toString()
 
+    }
+
+    override fun isExitOnApprove(): Boolean {
+        return false
+    }
+
+    override fun showDialog() {
+        JComponentInitializer.alignCenter(this)
+        isVisible = true
+    }
+
+    override fun closeDialog() {
+       isVisible = false
     }
 }
