@@ -2,6 +2,7 @@ package cspace.component
 
 import cspace.ApplicationStarter
 import cspace.dialog.FrameOptionDialog
+import cspace.model.AnalyseKeyFrame
 import cspace.util.AssetsResolver
 import cspace.util.JComponentInitializer
 import java.awt.BorderLayout
@@ -80,5 +81,9 @@ class ChannelTab: JPanel() {
             }
         }
         return duplicated
+    }
+
+    fun getAnalyseKeyFrameList(): List<AnalyseKeyFrame> {
+        return frameContainer.components.filterIsInstance<KeyFrameButton>().map { (it as KeyFrameButton).keyFrame }
     }
 }

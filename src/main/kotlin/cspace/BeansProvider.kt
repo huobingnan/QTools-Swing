@@ -9,6 +9,7 @@ import cspace.dialog.ExceptionDialog
 import cspace.dialog.FrameOptionDialog
 import cspace.dialog.ResourceDetailDialog
 import cspace.frame.MainFrame
+import cspace.graphic.BondLengthTableViewBuilder
 import cspace.ui.ChannelView
 import cspace.ui.DisplayView
 import cspace.ui.MainView
@@ -30,5 +31,7 @@ class BeansProvider: AbstractModule() {
         bind(FrameOptionDialog::class.java).`in`(Scopes.SINGLETON)
         // 注册frame
         bind(MainFrame::class.java).`in`(Scopes.SINGLETON)
+        // 注册Graph Builder
+        bind(BondLengthTableViewBuilder::class.java).`in`(Scopes.SINGLETON)
     }
 }

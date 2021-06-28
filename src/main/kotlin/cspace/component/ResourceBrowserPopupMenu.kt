@@ -25,27 +25,33 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
         // 导入VASP文件
         item.addActionListener {
             val fileChooser = JFileChooser()
+            fileChooser.isMultiSelectionEnabled = true
             val fileChooserParentComponent = ApplicationStarter.getContext().getInstance(MainView::class.java)
             val result = fileChooser.showOpenDialog(fileChooserParentComponent)
             if (result != JFileChooser.APPROVE_OPTION) return@addActionListener
-            val contcarFile = fileChooser.selectedFile
-            // 解析文件
-            try {
-                val contcar = ContcarFileParser.parse(contcarFile)
-                // 构造Resource对象
-                val resource = Resource()
-                resource.name = "${contcarFile.nameWithoutExtension} [${Resource.VASP}]"
-                resource.instance = contcar
-                resource.type = Resource.VASP
-                resource.associatedFile = contcarFile
-                // 更新ResourceBrowser的显示
-                val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
-                resourceBrowser.acceptResource(resource)
-            }catch (ex: Exception) {
-                val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
-                exceptionDialog.acceptException(ex)
-                JComponentInitializer.showDialogSupport(exceptionDialog)
+            // 可以多选
+            val contcarFileList = fileChooser.selectedFiles
+            if (contcarFileList == null || contcarFileList.isEmpty()) return@addActionListener
+            contcarFileList.forEach {
+                // 解析文件
+                try {
+                    val contcar = ContcarFileParser.parse(it)
+                    // 构造Resource对象
+                    val resource = Resource()
+                    resource.name = "${it.nameWithoutExtension} [${Resource.VASP}]"
+                    resource.instance = contcar
+                    resource.type = Resource.VASP
+                    resource.associatedFile = it
+                    // 更新ResourceBrowser的显示
+                    val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+                    resourceBrowser.acceptResource(resource)
+                }catch (ex: Exception) {
+                    val exceptionDialog = ApplicationStarter.getContext().getInstance(ExceptionDialog::class.java)
+                    exceptionDialog.acceptException(ex)
+                    JComponentInitializer.showDialogSupport(exceptionDialog)
+                }
             }
+
         }
         item
     }

@@ -19,7 +19,7 @@ import javax.swing.*
  */
 class ResourceBrowserView: JPanel() {
 
-    private val log = LoggerFactory.getLogger(ResourceBrowserView::class.java)
+    private val logger = LoggerFactory.getLogger(ResourceBrowserView::class.java)
 
     // 资源显示列表
     private val resourceListBrowser: JList<Resource> by lazy {
@@ -125,6 +125,14 @@ class ResourceBrowserView: JPanel() {
         val model = resourceListBrowser.model as DefaultListModel
         if (model.isEmpty) return emptyList()
         return model.elements().toList()
+    }
+
+    fun getResourceSearchTable(): Map<String, Resource> {
+        val searchTable = HashMap<String, Resource>()
+        getAllResources().forEach {
+            searchTable[it.name] = it
+        }
+        return searchTable
     }
 
     /**
