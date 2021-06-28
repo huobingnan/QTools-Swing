@@ -113,7 +113,8 @@ class ResourceDetailDialog: JDialog(), DialogSupport{
 
     init {
         isVisible = false
-        isModal = true
+        // 2021-6-28 取消详情对话展示框的模态效果
+        //isModal = true
         title = "information"
         preferredSize = Dimension(600, 700)
         setLocationRelativeTo(null)

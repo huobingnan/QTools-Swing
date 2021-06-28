@@ -54,7 +54,8 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
         val comboBox = JComboBox<String>()
         comboBox.isEditable = false
         val model = comboBox.model as DefaultComboBoxModel
-        model.addElement("new")
+        model.addElement(ChannelSetting.SHOW_AREA_DEFAULT) // 通过默认的形式展示结果
+        model.addElement(ChannelSetting.SHOW_AREA_ALWAYS_NEW) // 总是新建面板展示结果
         comboBox
     }
     // 展示类型选择框

@@ -26,6 +26,9 @@ data class ChannelSetting(
         const val SHOW_LINE_CHART = "line chart"
         const val SHOW_BAR_CHART = "bar chart"
 
+        const val SHOW_AREA_DEFAULT = "default"
+        const val SHOW_AREA_ALWAYS_NEW = "always new"
+
         private val CHANNEL_TYPE_COLLECTION = arrayOf(TYPE_BOND_ANGLE, TYPE_BOND_LENGTH)
 
         private val CHANNEL_DISPLAY_TYPE_COLLECTION = arrayOf(SHOW_TABLE_VIEW, SHOW_BAR_CHART, SHOW_LINE_CHART)

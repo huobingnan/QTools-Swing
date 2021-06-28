@@ -5,8 +5,11 @@ import cspace.ApplicationStarter
 import cspace.component.ChannelTab
 import cspace.dialog.ChannelOptionDialog
 import cspace.graphic.BondLengthTableViewBuilder
+import cspace.graphic.GraphBuilder
+import cspace.model.AnalyseKeyFrame
 import cspace.model.BondLengthResult
 import cspace.model.ChannelSetting
+import cspace.model.Resource
 import cspace.support.BondLength
 import cspace.util.AssetsResolver
 import cspace.util.JComponentInitializer
@@ -98,10 +101,7 @@ class ChannelView: JPanel() {
             when (channelSetting.channelType) {
                 ChannelSetting.TYPE_BOND_LENGTH -> {
                     // 分析键长
-                    val result = BondLength.perform(frameList, resourceSearchTable, channelSetting)
-                    val displayView = ApplicationStarter.getContext().getInstance(DisplayView::class.java)
-                    val builder = ApplicationStarter.getContext().getInstance(BondLengthTableViewBuilder::class.java)
-                    displayView.acceptGraphBuilder(builder, result)
+                   bondLengthGraphBuild(frameList, resourceSearchTable, channelSetting)
                 }
                 else -> {
                     val parent = ApplicationStarter.getContext().getInstance(MainFrame::class.java)
@@ -230,6 +230,30 @@ class ChannelView: JPanel() {
     }
 
     // ------------------------- 业务方法 -------------------------
+    private fun bondLengthGraphBuild(frameList: List<AnalyseKeyFrame>, resourceSearchTable: Map<String, Resource>, channelSetting: ChannelSetting) {
+
+        var builder: GraphBuilder? = null
+        // 根据设置选择合适的图形构建器
+        when (channelSetting.showType) {
+            ChannelSetting.SHOW_TABLE_VIEW -> {
+                builder = ApplicationStarter.getContext().getInstance(BondLengthTableViewBuilder::class.java)
+            }
+        }
+        if (builder != null) {
+            val result = BondLength.perform(frameList, resourceSearchTable, channelSetting)
+            val displayView = ApplicationStarter.getContext().getInstance(DisplayView::class.java)
+            displayView.acceptGraphBuilder(builder, result)
+        } else {
+            val parent = ApplicationStarter.getContext().getInstance(MainFrame::class.java)
+            JOptionPane.showMessageDialog(
+                parent,
+                "nonsupport show type : \"${channelSetting.showType}\"",
+                "error",
+                JOptionPane.ERROR_MESSAGE
+            )
+        }
+
+    }
 
     private fun newChannelTab(): JComponent {
        return ChannelTab()

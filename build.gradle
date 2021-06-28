@@ -60,3 +60,14 @@ task destributeWindowsPlatform(type: Launch4jLibraryTask) {
     bundledJre64Bit = true
     dontWrapJar = true
 }
+
+//jar {
+//    manifest {
+//        attributes "Main-Class": "cspace.ApplicationMainKt"
+//        from {
+//            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
+//        }
+//        exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+//
+//    }
+//}
