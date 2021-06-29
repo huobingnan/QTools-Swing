@@ -10,6 +10,7 @@ import cspace.ui.ResourceBrowserView
 import cspace.util.JComponentInitializer
 import cspace.support.ContcarFileParser
 import cspace.support.GaussianFileParser
+import org.slf4j.LoggerFactory
 import java.awt.Desktop
 import java.lang.Exception
 import javax.swing.*
@@ -19,6 +20,8 @@ import javax.swing.*
  * @author huobn
  */
 class ResourceBrowserPopupMenu: JPopupMenu() {
+
+    private val logger = LoggerFactory.getLogger(ResourceBrowserPopupMenu::class.java)
 
     private val importVaspResourceMenuItem: JMenuItem by lazy {
         val item = JMenuItem("vasp")
@@ -140,19 +143,34 @@ class ResourceBrowserPopupMenu: JPopupMenu() {
 
     // 在文件浏览器中打开
     private val openInFileExplore: JMenuItem by lazy {
-        var fileExploreName = "File Explore"
+        val item = JMenuItem()
         val osName = System.getProperty("os.name").toLowerCase()
         if (osName.startsWith("mac")) {
-            fileExploreName = "Finder"
-        }
-        val item = JMenuItem(fileExploreName)
-        item.addActionListener {
-            // 获取到ResourceBrowser对象
-            val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
-            val resource = resourceBrowser.getSelectedResource()
-            if (resource != null) {
-                Desktop.getDesktop().browseFileDirectory(resource.associatedFile)
+            logger.info("Runtime platform mac")
+            item.text = "Finder"
+            item.addActionListener {
+                // 获取到ResourceBrowser对象
+                val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+                val resource = resourceBrowser.getSelectedResource()
+                if (resource != null) {
+                    Desktop.getDesktop().browseFileDirectory(resource.associatedFile)
+                }
             }
+        }else if (osName.startsWith("win")){
+            logger.info("Runtime platform win")
+            item.text = "File explorer"
+            item.addActionListener {
+                // 获取到ResourceBrowser对象
+                val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
+                val resource = resourceBrowser.getSelectedResource()
+                if (resource != null) {
+
+                    Runtime.getRuntime().exec("explorer.exe ${resource.associatedFile!!.absolutePath}")
+                }
+            }
+        }else {
+            logger.info("Runtime platform unknown")
+            item.text = "Unknown"
         }
         item
     }

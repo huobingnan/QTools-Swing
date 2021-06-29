@@ -118,8 +118,11 @@ class FrameOptionDialog: JDialog(), DialogSupport {
         model.removeAllElements()
         val resourceBrowser = ApplicationStarter.getContext().getInstance(ResourceBrowserView::class.java)
         val resources = resourceBrowser.getAllResources()
+        // 2021-6-29 BUGFIX 使用Kotlin扩展方法导致运行时异常
         if (resources.isNotEmpty()) {
-            model.addAll(resources.map { it.name })
+            resources.forEach {
+                model.addElement(it.name)
+            }
             resourceComboBox.selectedIndex = 0
         }
 

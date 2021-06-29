@@ -1,10 +1,22 @@
-import edu.sc.seis.launch4j.tasks.Launch4jLibraryTask
+buildscript {
+    repositories {
+        // 优先从本地加载依赖jar包
+        mavenLocal()
+        // 然后从阿里云加载依赖jar包
+        maven {url 'https://maven.aliyun.com/repository/central'}
+        // 最后从Maven中央仓库加载依赖jar包
+        mavenCentral()
+    }
+
+}
 
 plugins {
     id 'java'
     id 'org.jetbrains.kotlin.jvm' version '1.4.10'
     id 'edu.sc.seis.launch4j' version '2.5.0'
 }
+
+
 
 kotlin {
     targetCompatibility = JavaVersion.VERSION_1_8
@@ -48,26 +60,21 @@ dependencies {
 
 }
 
-launch4j {
-    mainClassName = 'cspace.ApplicationMainKt'
+jar {
+    //详细信息参考 https://docs.gradle.org/current/dsl/org.gradle.api.tasks.bundling.Jar.html
+    archivesBaseName = 'QTools-Runnable'//基本的文件名
+    archiveVersion = '1.0.0-BETA' //版本
+    manifest { //配置jar文件的manifest
+        attributes(
+                "Manifest-Version": 1.0,
+                'Main-Class': 'cspace.ApplicationMainKt' //指定main方法所在的文件
+        )
+    }
+    //打包依赖包
+    from {
+        (configurations.runtimeClasspath).collect {
+            it.isDirectory() ? it : zipTree(it)
+        }
+    }
 }
 
-task destributeWindowsPlatform(type: Launch4jLibraryTask) {
-    mainClassName = "cspace.ApplicatinMainKt"
-    outputDir = "windows-release"
-    outfile = "QTools.exe"
-    bundledJrePath = "./jre" // JRE路径
-    bundledJre64Bit = true
-    dontWrapJar = true
-}
-
-//jar {
-//    manifest {
-//        attributes "Main-Class": "cspace.ApplicationMainKt"
-//        from {
-//            configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
-//        }
-//        exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
-//
-//    }
-//}
