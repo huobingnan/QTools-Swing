@@ -139,7 +139,7 @@ class ChannelOptionNewExtSettingDialog: JDialog(), DialogSupport {
     }
 
     override fun showDialog() {
-        settingValueTextField.text = ""
+        settingValueTextField.selectAll()
         exitOnApprove = false
         isVisible = true
     }
@@ -149,6 +149,9 @@ class ChannelOptionNewExtSettingDialog: JDialog(), DialogSupport {
     }
 
     // ------------------ 业务方法 ------------------
+    fun refreshUI(pair: Pair<String, String>) {
+        acceptSettingPair(pair)
+    }
 
     fun acceptSettingPair(pair: Pair<String, String>) {
         settingKeyComboBox.selectedItem = pair.first

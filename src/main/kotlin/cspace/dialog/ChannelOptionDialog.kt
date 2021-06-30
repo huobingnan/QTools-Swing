@@ -94,6 +94,27 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
                 return false
             }
         }
+        table.addMouseListener(object: MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent?) {
+                val event = e!!
+                if (event.button == MouseEvent.BUTTON1 && event.clickCount == 2) {
+                    val selectedRow = table.selectedRow
+                    if (selectedRow < 0) return
+                    val model = table.model as DefaultTableModel
+                    val data = model.dataVector[selectedRow]
+                    // 双击查看详情
+                    val dialog = ApplicationStarter.getContext().getInstance(ChannelOptionNewExtSettingDialog::class.java)
+                    dialog.refreshUI(Pair(data[0] as String, data[1] as String))
+                    JComponentInitializer.showDialogSupport(dialog)
+                    // 是否更新
+                    if (!dialog.isExitOnApprove()) return
+                    // 更新
+                    val settingPair = dialog.getSettingPair()
+                    model.setValueAt(settingPair.second, selectedRow, 1)
+
+                }
+            }
+        })
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
         table.rowHeight = table.rowHeight + 10
         table.toolTipText = "Right click to new setting"
