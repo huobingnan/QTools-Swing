@@ -3,9 +3,11 @@ package cspace.ui
 import cspace.ApplicationStarter
 import cspace.graphic.GraphBuilder
 import cspace.model.ChannelSetting
+import cspace.util.AssetsResolver
 import org.slf4j.LoggerFactory
 import java.awt.BorderLayout
 import java.awt.Dimension
+import java.awt.Image
 import javax.swing.*
 import javax.swing.border.TitledBorder
 import javax.swing.event.InternalFrameAdapter
@@ -18,6 +20,7 @@ import javax.swing.event.InternalFrameEvent
 class DisplayView: JPanel() {
 
     private val logger = LoggerFactory.getLogger(DisplayView::class.java)
+
 
     private val graphDesktopPane: JDesktopPane by lazy {
         val pane = JDesktopPane()
@@ -43,6 +46,13 @@ class DisplayView: JPanel() {
             }
         }
         if (internalFrame == null) {
+            // 生成程序的icon图标
+            var icon: ImageIcon? = null
+            when (selectedChannelSetting.showType) {
+                ChannelSetting.SHOW_TABLE_VIEW -> {
+                    icon = ImageIcon(AssetsResolver.getAsset("internal-frame.table-view.icon"))
+                }
+            }
             internalFrame = JInternalFrame(frameNameIdentifier, true, true)
             internalFrame!!.preferredSize = Dimension(350, 350)
             internalFrame!!.name = frameNameIdentifier
@@ -55,6 +65,9 @@ class DisplayView: JPanel() {
                     super.internalFrameClosed(e)
                 }
             })
+            if (icon != null) {
+                internalFrame!!.frameIcon = icon
+            }
             graphDesktopPane.add(internalFrame)
             logger.info("Add an internal frame into graphDesktopPane with identifier $frameNameIdentifier")
         } else {

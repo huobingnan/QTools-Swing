@@ -1,11 +1,9 @@
 package cspace.dialog
 
-import com.kitfox.svg.app.MainFrame
 import cspace.ApplicationStarter
 import cspace.component.ExtSettingNewPopupMenu
 import cspace.constants.ApplicationDialogConstants
 import cspace.model.ChannelSetting
-import cspace.ui.MainView
 import cspace.util.DialogSupport
 import cspace.util.JComponentInitializer
 import java.awt.*
@@ -94,6 +92,8 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
                 return false
             }
         }
+        table.preferredSize = Dimension(500, 190)
+        table.size = table.preferredSize
         table.addMouseListener(object: MouseAdapter() {
             override fun mouseClicked(e: MouseEvent?) {
                 val event = e!!
@@ -115,6 +115,15 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
                 }
             }
         })
+        table.addMouseListener(object: MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent?) {
+                val event = e!!
+                if (event.button == MouseEvent.BUTTON3) {
+                    val popupMenu = ApplicationStarter.getContext().getInstance(ExtSettingNewPopupMenu::class.java)
+                    popupMenu.show(table, e.x, e.y)
+                }
+            }
+        })
         table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
         table.rowHeight = table.rowHeight + 10
         table.toolTipText = "Right click to new setting"
@@ -130,14 +139,6 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
         pane.border = TitledBorder("additional setting")
         pane.preferredSize = Dimension(500, 200)
         val scrollPane = JScrollPane(extSettingTable)
-        scrollPane.addMouseListener(object: MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent?) {
-                if (e!!.button == MouseEvent.BUTTON3) {
-                    val popupMenu = ApplicationStarter.getContext().getInstance(ExtSettingNewPopupMenu::class.java)
-                    popupMenu.show(pane, e.x, e.y)
-                }
-            }
-        })
         pane.add(scrollPane, BorderLayout.CENTER)
         pane
     }
@@ -296,6 +297,16 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
             extSettingTable.setRowSelectionInterval(index, index)
         } else {
             // 不重复就添加
+            // 添加之前先校验
+            if (pair.second.isBlank() || pair.second.isEmpty()) {
+                JOptionPane.showMessageDialog(
+                    this,
+                    "setting value can't be blank",
+                    "error",
+                    JOptionPane.ERROR_MESSAGE
+                )
+                return
+            }
             tableModel.addRow(arrayOf(pair.first, pair.second))
         }
     }

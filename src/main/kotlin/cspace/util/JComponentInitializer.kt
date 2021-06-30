@@ -6,6 +6,7 @@ import java.awt.Window
 import javax.swing.JComponent
 import javax.swing.JDialog
 import javax.swing.JFrame
+import javax.swing.SwingUtilities
 import kotlin.math.abs
 
 /**
@@ -34,7 +35,11 @@ class JComponentInitializer {
 
         // 使用这个方法显示Dialog，会调用Dialog的showDialog方法来显示dialog
         // 方便将一些初始化代码逻辑写在这里
+        // 这个方法是一个阻塞的方法，不管窗口是否是模态，都会在这里阻塞
         @JvmStatic fun showDialogSupport(dialogSupport: DialogSupport): Unit {
+            if (dialogSupport is Window) {
+                alignCenter(dialogSupport)
+            }
             dialogSupport.showDialog()
         }
 

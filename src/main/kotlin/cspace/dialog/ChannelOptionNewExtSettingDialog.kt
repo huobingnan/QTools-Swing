@@ -34,7 +34,6 @@ class ChannelOptionNewExtSettingDialog: JDialog(), DialogSupport {
         Value constrain:
             The value must be a valid chemical element symbol, used ';' between multiple elements separated
     """.trimIndent()
-
     private val settingKeyComboBox: JComboBox<String> by lazy {
         val comboBox = JComboBox<String>()
         val model = comboBox.model as DefaultComboBoxModel
@@ -62,13 +61,14 @@ class ChannelOptionNewExtSettingDialog: JDialog(), DialogSupport {
 
         textField
     }
-
+    // 对设置项进行描述的文字栏
     private val settingKeyDescriptionArea: JTextArea by lazy {
         val textArea = JTextArea()
         textArea.isEditable = false
         textArea.size = Dimension(200, 150)
         textArea.preferredSize = textArea.size
         textArea.lineWrap = true
+        textArea.font = Font(Font.SANS_SERIF, Font.ITALIC, 13)
         textArea
     }
 
@@ -123,6 +123,7 @@ class ChannelOptionNewExtSettingDialog: JDialog(), DialogSupport {
     init {
         title = "setting option"
         isModal = true
+        isAlwaysOnTop = true
         size = Dimension( 380, 350)
         preferredSize = size
         isResizable = false
