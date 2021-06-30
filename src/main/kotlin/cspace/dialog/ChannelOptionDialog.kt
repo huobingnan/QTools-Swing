@@ -94,17 +94,8 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
                 return false
             }
         }
-        table.addMouseListener(object: MouseAdapter() {
-            override fun mouseClicked(e: MouseEvent?) {
-                super.mouseClicked(e)
-                if (e!!.button == MouseEvent.BUTTON3 && e.clickCount == 2) {
-                    val popupMenu = ApplicationStarter.getContext().getInstance(ExtSettingNewPopupMenu::class.java)
-                    popupMenu.show(table, e.x, e.y)
-                }else {
-                    println("trigger")
-                }
-            }
-        })
+        table.setSelectionMode(ListSelectionModel.SINGLE_SELECTION)
+        table.rowHeight = table.rowHeight + 10
         table.toolTipText = "Right click to new setting"
         table.tableHeader.reorderingAllowed = false
         table.tableHeader.font = Font(Font.SANS_SERIF, Font.PLAIN, 12)
@@ -118,6 +109,14 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
         pane.border = TitledBorder("additional setting")
         pane.preferredSize = Dimension(500, 200)
         val scrollPane = JScrollPane(extSettingTable)
+        scrollPane.addMouseListener(object: MouseAdapter() {
+            override fun mouseClicked(e: MouseEvent?) {
+                if (e!!.button == MouseEvent.BUTTON3) {
+                    val popupMenu = ApplicationStarter.getContext().getInstance(ExtSettingNewPopupMenu::class.java)
+                    popupMenu.show(pane, e.x, e.y)
+                }
+            }
+        })
         pane.add(scrollPane, BorderLayout.CENTER)
         pane
     }
@@ -133,11 +132,6 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
             channelSetting.channelType = typeComboBox.selectedItem as String
             channelSetting.showArea = displayAreaComboBox.selectedItem as String
             channelSetting.showType = displayTypeComboBox.selectedItem as String
-//            val model = extSettingTable.model as DefaultTableModel
-//            channelSetting.extSetting.clear()
-//            model.dataVector.forEach {
-//                channelSetting.extSetting[it[0] as String] = it[1] as String
-//            }
             try {
                 ChannelSetting.validate(channelSetting) // 检查输入是否合法
                 exitOnApprove = true
@@ -227,6 +221,7 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
      * @author: huobn
      */
     fun getChannelSetting(): ChannelSetting {
+        val model = extSettingTable.model as DefaultTableModel
         return ChannelSetting(
            nameTextField.text,
            typeComboBox.selectedItem as String,
@@ -234,7 +229,9 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
            displayTypeComboBox.selectedItem as String,
         ).apply {
             extSetting.clear()
-
+            model.dataVector.forEach {
+                extSetting[it[0] as String] = it[1] as String
+            }
         }
     }
 
@@ -254,6 +251,48 @@ class ChannelOptionDialog: JDialog(), DialogSupport {
             channelSetting.extSetting[it[0] as String] = it[1] as String
         }
         return channelSetting
+    }
+
+    fun acceptExtChannelSettingPair(pair: Pair<String, String>) {
+        val tableModel = extSettingTable.model as DefaultTableModel
+        var duplicated = false
+        var index = 0
+        tableModel.dataVector.forEach {
+            if (it[0] == pair.first) {
+                duplicated = true
+                return@forEach
+            }
+            index++
+        }
+        if (duplicated) {
+            // 重复就不添加
+            JOptionPane.showMessageDialog(
+                this,
+                "duplication setting key \"${pair.first}\"",
+                "error",
+                JOptionPane.ERROR_MESSAGE
+            )
+            extSettingTable.setRowSelectionInterval(index, index)
+        } else {
+            // 不重复就添加
+            tableModel.addRow(arrayOf(pair.first, pair.second))
+        }
+    }
+
+    // 删除选中的额外配置项
+    fun deleteSelectedExtSetting() {
+        if (!isVisible) return
+        val selectedRow = extSettingTable.selectedRow ?: return
+        if (selectedRow < 0) return
+        val option = JOptionPane.showConfirmDialog(
+            this,
+            "are you sure to delete those settings?",
+            "warning",
+            JOptionPane.WARNING_MESSAGE
+        )
+        if (option != JOptionPane.OK_OPTION) return
+        val model = extSettingTable.model as DefaultTableModel
+        model.removeRow(selectedRow)
     }
 
     override fun isExitOnApprove(): Boolean {
